@@ -1,5 +1,7 @@
 import pygame
+import sys
 
+#this class is not used in the current implementation, but it can be used to handle player controls in the future.
 # class Controls:
 #     def __init__(self):
 #         self.forward = False
