@@ -24,18 +24,18 @@ while running:
 
     #Handle inputs
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_a]:
-        #move left
-        player.x -= MOVEMENT_SPEED
-    if keys[pygame.K_d]:
-        #move right
-        player.x += MOVEMENT_SPEED
-    if keys[pygame.K_w]:
-        #move up
-        player.y -= MOVEMENT_SPEED
     if keys[pygame.K_s]:
         #move down
-        player.y += MOVEMENT_SPEED
+        player.speed += player.acceleration
+    if keys[pygame.K_w]:
+        #move up
+        player.speed -= player.acceleration
+    if keys[pygame.K_a]:
+        #move left
+        player.angle += 0.03
+    if keys[pygame.K_d]:
+        #move right
+        player.angle -= 0.03
 
     #Update
     player.upd_pos()
