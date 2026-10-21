@@ -1,15 +1,18 @@
 import pygame
 import sys
-from Utils import Player
+from Road import Road
+from Player import Player
 
 pygame.init()
 
 # 2. Set up the display
 WIDTH, HEIGHT = 1080, 720
 MOVEMENT_SPEED = 10
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
+TURNING_COEFF = 0.25
+screen = pygame.display.set_mode((WIDTH, HEIGHT), vsync=1)
 pygame.display.set_caption("game")
 player = Player(100, 100, 30, 50)
+road = Road(250, 500, 4)
 
 # 3. Create a clock to control frame rate
 clock = pygame.time.Clock()
@@ -32,10 +35,10 @@ while running:
         player.speed -= player.acceleration
     if keys[pygame.K_a]:
         #move left
-        player.angle += 0.03
+        player.angle -= 0.03 * player.speed * TURNING_COEFF
     if keys[pygame.K_d]:
         #move right
-        player.angle -= 0.03
+        player.angle += 0.03 * player.speed * TURNING_COEFF
 
     #Update
     player.upd_pos()
@@ -43,6 +46,7 @@ while running:
     #Render
     screen.fill("BLACK")
     player.draw(screen)
+    road.draw(screen)
     pygame.display.flip()
 
     clock.tick(FPS) # Limit fps 
