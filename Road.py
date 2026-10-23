@@ -4,10 +4,12 @@ from Utils import *
 
 ROAD_COLOR = "GREY"
 class Road:
-    def __init__(self, x, width, lane_count = 4):
+    def __init__(self, x, width, mu_k, mu_s, lane_count=4):
         self.x = x
         self.width = width
         self.lane_count = lane_count
+        self.mu_k = mu_k
+        self.mu_s = mu_s
 
         self.left = x - width / 2
         self.right = x + width / 2
@@ -32,3 +34,4 @@ class Road:
         for i in range(1, self.lane_count):
             x = lerp(self.left, self.right, i / self.lane_count)
             pygame.draw.line(screen, "GRAY", (x, self.top), (x, self.bottom), 5)
+            

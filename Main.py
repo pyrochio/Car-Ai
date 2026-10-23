@@ -1,55 +1,52 @@
 import pygame
 import sys
+from CarPhysics import CarPhysics
 from Road import Road
 from Player import Player
 
 pygame.init()
 
-# 2. Set up the display
-WIDTH, HEIGHT = 1080, 720
-MOVEMENT_SPEED = 10
-TURNING_COEFF = 0.25
-screen = pygame.display.set_mode((WIDTH, HEIGHT), vsync=1)
+WIDTH, HEIGHT = 1440, 720
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("game")
-player = Player(100, 100, 30, 50)
-road = Road(250, 500, 4)
+physics = CarPhysics(100, 100, 1000) #heavier = slower acceleration, slower turning, higher max speed
+#1000 low 4000 high
+player = Player(30, 50)
+road = Road(250, 500, mu_k=0.005, mu_s=0.5, lane_count=4)
 
-# 3. Create a clock to control frame rate
 clock = pygame.time.Clock()
 FPS = 60
 
-# 4. Main Game Loop
 running = True
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
-    #Handle inputs
+
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_s]:
-        #move down
-        player.speed += player.acceleration
-    if keys[pygame.K_w]:
-        #move up
-        player.speed -= player.acceleration
-    if keys[pygame.K_a]:
-        #move left
-        player.angle -= 0.03 * player.speed * TURNING_COEFF
-    if keys[pygame.K_d]:
-        #move right
-        player.angle += 0.03 * player.speed * TURNING_COEFF
+    throttle = int(keys[pygame.K_w]) - int(keys[pygame.K_s])
+    steering = int(keys[pygame.K_d]) - int(keys[pygame.K_a])
+    drifting = keys[pygame.K_SPACE]
 
-    #Update
-    player.upd_pos()
+    #delta time in seconds caps fps to 60
+    # actual seconds this frame took
+    dt = clock.tick(FPS) / 1000
 
-    #Render
+    physics.update(
+        throttle=throttle,
+        steering=steering,
+        dt=dt,
+        mu_k=road.mu_k,
+        mu_s=road.mu_s,
+        drifting=drifting,
+    )
+
     screen.fill("BLACK")
-    player.draw(screen)
     road.draw(screen)
+    player.draw(screen, physics.x, physics.y, physics.angle, drifting, dt)
     pygame.display.flip()
 
-    clock.tick(FPS) # Limit fps 
 
 pygame.quit()
-sys.exit
+sys.exit()
